@@ -1,0 +1,191 @@
+/* 처음 카드가 돌면서 등장하게 하는 부분 */
+@keyframes start-ani {
+  /* translate(-100%, 100%)는 카드의크기만큼 왼쪽아래 위치하게된다 */
+  0% {
+    transform: translate(-100%, 100%) rotate(-540deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+}
+
+html {
+  font-size: 14px;
+}
+body {
+  overflow: hidden;
+  font-family: 'Playfair Display', serif;
+  background: url(../images/tablewood.jpg);
+  /* 배경이미지를 고해상도로 하기위해 이미지사이즈  1574 x 260*/
+  background-size: auto 130px;
+  /* css 3d를 적용하기 위해 설정해주어야 함. */
+  /* px은 눈에서 부터 거리 */
+  perspective: 1500px;
+}
+.hand {
+  position: absolute;
+  /* 처음 손이미지의 위치를 잡아줌 */
+  left: 70%;
+  top: 70%;
+  z-index: 10;
+  width: 400px;
+}
+.hand img {
+  /* 줌인이 되었을 때, 마우스 위치랑 이미지의 손가락 방향위치를 맟추기 위해 추가 */
+  transform-origin: left top;
+  transition: 1s;
+}
+.zoom-in .hand img {
+  transform: scale(2);
+}
+.leaflet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 30vw;
+  height: 30vw;
+  margin: auto;
+  /* 적용해 주어야 3d가 적용됨 */
+  transform-style: preserve-3d;
+  transition: 1s;
+  cursor: pointer;
+  /* forwards은 에니메이션이 100%에 도달했을 때, 그 상태를 유지함 */
+  animation: start-ani 1s forwards;
+}
+.page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 3rem;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 5px 5px;
+  /* 적용해 주어야 3d가 적용됨 */
+  transform-style: preserve-3d;
+  transition: 1s;
+}
+.page:nth-child(1) {
+  z-index: 2;
+  /* 1. 카드가 열리는 방향 2. 원점의 위치를 지정합니다. 기본값은 요소의 중심이며 변경할 수 있습니다. 회전, 확대, 비틀기 등 하나의 점을 기준으로 하는 변형에서 사용합니다. */
+  transform-origin: left;
+}
+.page:nth-child(3) {
+  z-index: 1;
+  transform-origin: right;
+}
+.page:nth-child(1).page-flipped {
+  /* 내쪽으로 열리게  */
+  transform: rotateY(-150deg);
+}
+.page:nth-child(3).page-flipped {
+  transform: rotateY(150deg);
+}
+.page-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: cornsilk;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+.page-face:nth-child(2) {
+  transform: rotateY(180deg);
+}
+
+/* 페이지가 흰색이 되기위해 하려고 */
+.page:nth-child(1) .page-face:nth-child(2),
+.page:nth-child(2) .page-face:nth-child(1),
+.page:nth-child(3) .page-face:nth-child(2) {
+  background: #fff;
+}
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+/* 카드표지의 직각사각형 선 그리는 css */
+.cover-page::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  border: 1px solid tan;
+}
+.menu-header-title {
+  font-family: 'Courgette', cursive;
+}
+.menu-list {
+  font-size: 0.7rem;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 2em;
+  transition: 0.5s;
+}
+
+/* 줌인이 되었을 때, 전체가 안보이게 */
+.zoom-in .menu-item {
+  opacity: 0;
+}
+
+/* 줌인이 되었을 때, 클릭된 것만 보이게 */
+.zoom-in .menu-item.current-menu {
+  opacity: 1;
+}
+.back-btn {
+  /* 줌 아웃일때는 버튼이 안보이기 위해서 none으로 */
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+/* .current-menu가 붙은 back-btn을 보이게 */
+.current-menu .back-btn {
+  display: inline-block;
+}
+.menu-item-photo {
+  width: 20%;
+  padding-bottom: 20%;
+  /* 이미지가 쪼그라들지 않게? 설정 */
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+.menu-item-info {
+  flex: 1;
+  margin-left: 1em;
+}
+.member-name {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.close-btn {
+  /* 줌 아웃일때는 버튼이 안보이기 위해서 none으로 */
+  display: none;
+  position: absolute;
+  top: -2rem;
+  right: 10px;
+  font-size: 1.2rem;
+  color: #fff;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 1px 0;
+  /* 뒤집혔을 때, 안보이도록 */
+  backface-visibility: hidden;
+}
+/* leaflet-opened가 붙었을 때, 버튼이 보기게 하기위해 */
+.leaflet-opened .close-btn {
+  display: inline-block;
+}
